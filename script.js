@@ -116,8 +116,7 @@ setInterval(fetchStocks, 180000); // refresh every 3 min
 // ===== LIVE NEWS TICKER (multi-source) =====
 const NEWS_FEEDS = [
   { name: 'BBC', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-  { name: 'CNBC', url: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
-  { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?taxonomy=best-sectors&post_type=best' }
+  { name: 'NYT', url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml' }
 ];
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 

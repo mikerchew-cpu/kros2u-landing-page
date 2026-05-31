@@ -1,19 +1,5 @@
-const TICKERS = [
-  { key: 'sp500', name: 'S&P 500', symbol: '^GSPC' },
-  { key: 'dow', name: 'Dow Jones', symbol: '^DJI' },
-  { key: 'nasdaq', name: 'NASDAQ', symbol: '^IXIC' },
-  { key: 'ftse', name: 'FTSE 100', symbol: '^FTSE' },
-  { key: 'nikkei', name: 'Nikkei 225', symbol: '^N225' },
-  { key: 'dax', name: 'DAX', symbol: '^GDAXI' },
-  { key: 'hsi', name: 'Hang Seng', symbol: '^HSI' },
-  { key: 'asx', name: 'ASX 200', symbol: '^AXJO' },
-  { key: 'gold', name: 'Gold', symbol: 'GC=F' },
-  { key: 'silver', name: 'Silver', symbol: 'SI=F' },
-  { key: 'crude', name: 'Crude Oil', symbol: 'CL=F' },
-  { key: 'natgas', name: 'Nat Gas', symbol: 'NG=F' },
-  { key: 'copper', name: 'Copper', symbol: 'HG=F' },
-  { key: 'platinum', name: 'Platinum', symbol: 'PL=F' }
-];
+// Maps TerminalFeed ETF symbols to our ticker keys
+const ETF_MAP = { SPY: 'sp500', DIA: 'dow', QQQ: 'nasdaq' };
 
 const DEMO = [
   { key:'sp500', name:'S&P 500', price:'5238.42', changePercent:'+0.82', direction:'up' },
@@ -32,6 +18,8 @@ const DEMO = [
   { key:'platinum', name:'Platinum', price:'1024.50', changePercent:'-0.18', direction:'down' }
 ];
 
+const NAME_MAP = { sp500:'S&P 500', dow:'Dow Jones', nasdaq:'NASDAQ', ftse:'FTSE 100', nikkei:'Nikkei 225', dax:'DAX', hsi:'Hang Seng', asx:'ASX 200', gold:'Gold', silver:'Silver', crude:'Crude Oil', natgas:'Nat Gas', copper:'Copper', platinum:'Platinum' };
+
 function getDemoData() {
   const now = new Date();
   const seed = now.getMinutes() + now.getHours() * 60;
@@ -42,20 +30,21 @@ function getDemoData() {
   });
 }
 
-async function tryYahoo() {
-  const symbols = TICKERS.map(t => t.symbol).join(',');
-  const url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' + symbols;
-  const r = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-      'Accept': 'application/json',
-      'Origin': 'https://finance.yahoo.com',
-      'Referer': 'https://finance.yahoo.com/'
-    }
-  });
+async function tryTerminalFeed() {
+  const r = await fetch('https://terminalfeed.io/api/stocks');
   if (!r.ok) throw new Error('Status ' + r.status);
   const j = await r.json();
-  return j.quoteResponse?.result || [];
+  return j.data;
+}
+
+function toTickerItem(key, price, changePercent) {
+  return {
+    key,
+    name: NAME_MAP[key],
+    price: price.toFixed(2),
+    changePercent: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2),
+    direction: changePercent >= 0 ? 'up' : 'down'
+  };
 }
 
 export default async function handler(req, res) {
@@ -63,24 +52,16 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
 
   try {
-    const results = await tryYahoo();
-    if (results.length > 0) {
-      const map = {};
-      results.forEach(r => { map[r.symbol] = r; });
-      const data = TICKERS.map(t => {
-        const r = map[t.symbol];
-        if (!r) return null;
-        const price = r.regularMarketPrice || 0;
-        const change = r.regularMarketChange || 0;
-        const changePercent = r.regularMarketChangePercent || 0;
-        return {
-          key: t.key, name: t.name,
-          price: price.toFixed(2),
-          changePercent: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2),
-          direction: change >= 0 ? 'up' : 'down'
-        };
-      }).filter(Boolean);
-      if (data.length > 0) return res.json({ data, source: 'yahoo', timestamp: Date.now() });
+    const data = await tryTerminalFeed();
+    if (data && data.indices && data.indices.length > 0) {
+      const live = {};
+      data.indices.forEach(idx => {
+        const key = ETF_MAP[idx.symbol];
+        if (key) live[key] = toTickerItem(key, idx.price, idx.change_percent);
+      });
+      const demo = getDemoData();
+      const merged = demo.map(d => live[d.key] || d);
+      return res.json({ data: merged, source: 'terminalfeed+demo', timestamp: Date.now() });
     }
     res.json({ data: getDemoData(), source: 'demo', timestamp: Date.now() });
   } catch {
