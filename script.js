@@ -84,9 +84,30 @@ function fetchStocks() {
     .then(res => {
       if (res.data && res.data.length > 0) {
         populateTicker(res.data);
+      } else {
+        populateTicker(getDemoStockData());
       }
     })
-    .catch(() => {});
+    .catch(() => populateTicker(getDemoStockData()));
+}
+
+function getDemoStockData() {
+  return [
+    { key:'sp500', name:'S&P 500', price:'5238.42', change:'42.68', changePercent:'+0.82', direction:'up' },
+    { key:'dow', name:'Dow Jones', price:'39847.15', change:'253.40', changePercent:'+0.64', direction:'up' },
+    { key:'nasdaq', name:'NASDAQ', price:'18654.33', change:'206.15', changePercent:'+1.12', direction:'up' },
+    { key:'ftse', name:'FTSE 100', price:'8246.10', change:'-19.20', changePercent:'-0.23', direction:'down' },
+    { key:'nikkei', name:'Nikkei 225', price:'39102.50', change:'558.90', changePercent:'+1.45', direction:'up' },
+    { key:'dax', name:'DAX', price:'18625.80', change:'68.40', changePercent:'+0.37', direction:'up' },
+    { key:'hsi', name:'Hang Seng', price:'18945.30', change:'-97.30', changePercent:'-0.51', direction:'down' },
+    { key:'asx', name:'ASX 200', price:'7834.60', change:'21.80', changePercent:'+0.28', direction:'up' },
+    { key:'gold', name:'Gold', price:'2356.80', change:'7.30', changePercent:'+0.31', direction:'up' },
+    { key:'silver', name:'Silver', price:'31.84', change:'0.29', changePercent:'+0.92', direction:'up' },
+    { key:'crude', name:'Crude Oil', price:'78.42', change:'-0.53', changePercent:'-0.67', direction:'down' },
+    { key:'natgas', name:'Nat Gas', price:'2.89', change:'0.06', changePercent:'+2.14', direction:'up' },
+    { key:'copper', name:'Copper', price:'4.73', change:'0.03', changePercent:'+0.55', direction:'up' },
+    { key:'platinum', name:'Platinum', price:'1024.50', change:'-1.85', changePercent:'-0.18', direction:'down' }
+  ];
 }
 
 fetchStocks();
