@@ -170,6 +170,12 @@ body {
     font-size: 0.8rem;
 }
 
+.ticker-value {
+    color: rgba(255,255,255,0.6);
+    font-weight: 400;
+    font-size: 0.8rem;
+}
+
 .ticker-change.up {
     color: #4ade80;
 }
@@ -183,9 +189,6 @@ body {
     font-size: 0.8rem;
     margin-left: 2px;
 }
-
-.ticker-divider,
-.ticker-price { display: none; }
 
 .ticker-sep {
     color: rgba(255,255,255,0.15);
