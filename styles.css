@@ -184,12 +184,6 @@ body {
     color: #f87171;
 }
 
-.ticker-price {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.8rem;
-    margin-left: 2px;
-}
-
 .ticker-sep {
     color: rgba(255,255,255,0.15);
     padding: 0 12px;
@@ -199,6 +193,49 @@ body {
 @keyframes ticker-scroll {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+}
+
+/* Live News Ticker */
+.news-wrap {
+    background: var(--tiffany-blue);
+    padding: 6px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.news-container {
+    display: flex;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    gap: 12px;
+}
+
+.news-label {
+    background: var(--text-dark);
+    color: var(--white);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.news-track {
+    white-space: nowrap;
+    overflow: hidden;
+    flex: 1;
+}
+
+.news-item {
+    display: inline-block;
+    font-size: 0.82rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    padding-right: 60px;
 }
 
 /* Apps Section */
