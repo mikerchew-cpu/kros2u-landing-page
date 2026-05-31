@@ -3,161 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kros2U - Connect Your Apps</title>
-    <meta name="description" content="Kros2U - Unified platform to connect and manage all your applications">
+    <title>Kros2U - My Apps</title>
+    <meta name="description" content="Kros2U - Your hub for all Vercel-hosted applications">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="bg-pattern"></div>
+
     <!-- Header -->
     <header class="header">
         <div class="container header-content">
             <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="32" rx="8" fill="#003366"/>
+                    <path d="M16 8C14.5 8 12 9.5 12 13C12 16.5 14 19 16 20C18 19 20 16.5 20 13C20 9.5 17.5 8 16 8Z" fill="white"/>
+                    <path d="M16 20V24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 24H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
                 <span class="logo-text">Kros2U</span>
             </div>
             <nav class="nav">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="#apps" class="nav-link">Apps</a></li>
-                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
         <div class="container hero-content">
             <div class="hero-text">
-                <h1 class="hero-title">Welcome to Kros2U</h1>
-                <p class="hero-subtitle">Your hub for all Vercel-hosted applications. Click to explore.</p>
+                <h1 class="hero-title">My <span class="highlight">Applications</span></h1>
+                <p class="hero-subtitle">Your hub for all Vercel-hosted projects. Click to explore each app.</p>
             </div>
-            <div class="hero-image">
-                <div class="dashboard-mockup">
-                    <div class="dashboard-header">
-                        <div class="dashboard-logo">Kros2U</div>
-                        <div class="nav-dots">
-                            <span class="dot active"></span>
-                            <span class="dot"></span>
-                            <span class="dot"></span>
-                        </div>
-                    </div>
-                    <div class="dashboard-content">
-                        <a href="https://veg-hrm-indonesia.vercel.app/" target="_blank" class="app-card-link">
-                            <div class="app-card">
-                                <div class="app-icon">🌐</div>
-                                <div class="app-name">VEG HRM</div>
-                            </div>
-                        </a>
-                        <a href="https://nusantara-news-wheat.vercel.app/" target="_blank" class="app-card-link">
-                            <div class="app-card">
-                                <div class="app-icon">📰</div>
-                                <div class="app-name">Nusantara News</div>
-                            </div>
-                        </a>
-                        <a href="https://kros-web-demo.vercel.app/" target="_blank" class="app-card-link">
-                            <div class="app-card">
-                                <div class="app-icon">⚡</div>
-                                <div class="app-name">KROS Web Demo</div>
-                            </div>
-                        </a>
-                        <a href="https://myhrm-navy.vercel.app/" target="_blank" class="app-card-link">
-                            <div class="app-card">
-                                <div class="app-icon">👤</div>
-                                <div class="app-name">MyHRM</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+            <div class="hero-visual">
+                <div class="hero-shape"></div>
             </div>
         </div>
     </section>
-
-
 
     <!-- Apps Section -->
     <section class="apps" id="apps">
         <div class="container">
-            <h2 class="section-title">My Vercel Apps</h2>
-            <p class="section-subtitle">Click to open any of my applications hosted on Vercel</p>
+            <h2 class="section-title">Vercel Apps</h2>
+            <p class="section-subtitle">Click any app below to open it</p>
             <div class="apps-grid">
-                <a href="https://veg-hrm-indonesia.vercel.app/" target="_blank" class="app-button">
-                    <span class="app-button-icon">🌐</span>
-                    <span class="app-button-name">VEG HRM Indonesia</span>
-                    <span class="app-button-arrow">→</span>
+                <a href="https://veg-hrm-indonesia.vercel.app/" target="_blank" class="app-card-link">
+                    <div class="app-button">
+                        <div class="app-icon-box">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </div>
+                        <div class="app-button-text">
+                            <span class="app-button-name">VEG HRM Indonesia</span>
+                            <span class="app-button-desc">Human Resource Management</span>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="app-arrow">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </div>
                 </a>
-                <a href="https://nusantara-news-wheat.vercel.app/" target="_blank" class="app-button">
-                    <span class="app-button-icon">📰</span>
-                    <span class="app-button-name">Nusantara News</span>
-                    <span class="app-button-arrow">→</span>
+                <a href="https://nusantara-news-wheat.vercel.app/" target="_blank" class="app-card-link">
+                    <div class="app-button">
+                        <div class="app-icon-box">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9h2"/>
+                                <path d="M18 14h-8"/>
+                                <path d="M15 18h-5"/>
+                                <path d="M10 6h8v4h-8V6z"/>
+                            </svg>
+                        </div>
+                        <div class="app-button-text">
+                            <span class="app-button-name">Nusantara News</span>
+                            <span class="app-button-desc">News & Media Portal</span>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="app-arrow">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </div>
                 </a>
-                <a href="https://kros-web-demo.vercel.app/" target="_blank" class="app-button">
-                    <span class="app-button-icon">⚡</span>
-                    <span class="app-button-name">KROS Web Demo</span>
-                    <span class="app-button-arrow">→</span>
+                <a href="https://kros-web-demo.vercel.app/" target="_blank" class="app-card-link">
+                    <div class="app-button">
+                        <div class="app-icon-box">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                            </svg>
+                        </div>
+                        <div class="app-button-text">
+                            <span class="app-button-name">KROS Web Demo</span>
+                            <span class="app-button-desc">Web Application Demo</span>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="app-arrow">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </div>
                 </a>
-                <a href="https://myhrm-navy.vercel.app/" target="_blank" class="app-button">
-                    <span class="app-button-icon">👤</span>
-                    <span class="app-button-name">MyHRM</span>
-                    <span class="app-button-arrow">→</span>
+                <a href="https://myhrm-navy.vercel.app/" target="_blank" class="app-card-link">
+                    <div class="app-button">
+                        <div class="app-icon-box">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="app-button-text">
+                            <span class="app-button-name">MyHRM</span>
+                            <span class="app-button-desc">Employee Management</span>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="app-arrow">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </div>
                 </a>
             </div>
         </div>
     </section>
 
-
-
     <!-- Footer -->
     <footer class="footer">
-        <div class="container footer-content">
-            <div class="footer-logo">
-                <span class="logo-text">Kros2U</span>
-            </div>
-            <div class="footer-links">
-                <div class="footer-column">
-                    <h4 class="footer-title">Product</h4>
-                    <ul class="footer-list">
-                        <li><a href="#" class="footer-link">Features</a></li>
-                        <li><a href="#" class="footer-link">Integrations</a></li>
-                        <li><a href="#" class="footer-link">Pricing</a></li>
-                        <li><a href="#" class="footer-link">Security</a></li>
-                    </ul>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="white"/>
+                        <path d="M16 8C14.5 8 12 9.5 12 13C12 16.5 14 19 16 20C18 19 20 16.5 20 13C20 9.5 17.5 8 16 8Z" fill="#003366"/>
+                        <path d="M16 20V24" stroke="#003366" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 24H20" stroke="#003366" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="logo-text">Kros2U</span>
                 </div>
-                <div class="footer-column">
-                    <h4 class="footer-title">Company</h4>
-                    <ul class="footer-list">
-                        <li><a href="#" class="footer-link">About</a></li>
-                        <li><a href="#" class="footer-link">Blog</a></li>
-                        <li><a href="#" class="footer-link">Careers</a></li>
-                        <li><a href="#" class="footer-link">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4 class="footer-title">Resources</h4>
-                    <ul class="footer-list">
-                        <li><a href="#" class="footer-link">Documentation</a></li>
-                        <li><a href="#" class="footer-link">Tutorials</a></li>
-                        <li><a href="#" class="footer-link">API</a></li>
-                        <li><a href="#" class="footer-link">Status</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4 class="footer-title">Legal</h4>
-                    <ul class="footer-list">
-                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
-                        <li><a href="#" class="footer-link">Terms of Service</a></li>
-                        <li><a href="#" class="footer-link">Cookie Policy</a></li>
-                    </ul>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Apps</h4>
+                        <ul class="footer-list">
+                            <li><a href="https://veg-hrm-indonesia.vercel.app/" target="_blank" class="footer-link">VEG HRM</a></li>
+                            <li><a href="https://nusantara-news-wheat.vercel.app/" target="_blank" class="footer-link">Nusantara News</a></li>
+                            <li><a href="https://kros-web-demo.vercel.app/" target="_blank" class="footer-link">KROS Web Demo</a></li>
+                            <li><a href="https://myhrm-navy.vercel.app/" target="_blank" class="footer-link">MyHRM</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Connect</h4>
+                        <ul class="footer-list">
+                            <li><a href="https://github.com/mikerchew-cpu" target="_blank" class="footer-link">GitHub</a></li>
+                            <li><a href="https://vercel.com" target="_blank" class="footer-link">Vercel</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p class="footer-text">&copy; 2026 Kros2U. All rights reserved.</p>
-                <div class="footer-social">
-                    <a href="#" class="footer-social-link">Twitter</a>
-                    <a href="#" class="footer-social-link">LinkedIn</a>
-                    <a href="#" class="footer-social-link">GitHub</a>
-                </div>
             </div>
         </div>
     </footer>
