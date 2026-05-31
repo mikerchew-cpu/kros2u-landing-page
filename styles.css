@@ -237,6 +237,66 @@ body {
     font-size: 1rem;
 }
 
+.app-card-link {
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.app-card-link:hover {
+    transform: translateY(-4px);
+}
+
+/* App button styles */
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.app-button {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--white);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.app-button:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+
+.app-button-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.app-button-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+.app-button-arrow {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.app-button:hover .app-button-arrow {
+    transform: translateX(4px);
+}
+
 /* Features Section */
 .features {
     padding: 100px 0;
@@ -303,33 +363,6 @@ body {
 .apps {
     padding: 80px 0;
     background-color: var(--light-bg);
-}
-
-.apps-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    padding: 2rem 0;
-}
-
-.app-logo {
-    background-color: var(--white);
-    padding: 12px 20px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    font-weight: 500;
-    color: var(--text-dark);
-    transition: var(--transition);
-    border: 1px solid var(--border-color);
-    min-width: 120px;
-    text-align: center;
-}
-
-.app-logo:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary-color);
 }
 
 /* How It Works Section */
