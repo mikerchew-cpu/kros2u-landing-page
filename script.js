@@ -1,89 +1,167 @@
-// Smooth scroll for anchor links
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-            window.scrollTo({
-                top: targetElement.offsetTop - 80,
-                behavior: 'smooth'
-            });
-        }
+        const id = this.getAttribute('href');
+        if (id === '#') return;
+        const el = document.querySelector(id);
+        if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
     });
 });
 
-// Live News Ticker
-const SOURCES = [
-    { name: 'BBC', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-    { name: 'Reuters', url: 'https://www.reutersagency.com/feed/' },
-    { name: 'Google News', url: 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en' }
+// ===== LIVE STOCK TICKER =====
+const TICKERS = [
+  'sp500', 'dow', 'nasdaq', 'sep1',
+  'ftse', 'nikkei', 'dax', 'sep2',
+  'hsi', 'asx', 'sep3',
+  'gold', 'silver', 'crude', 'sep4',
+  'natgas', 'copper', 'platinum'
 ];
 
-const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
-
-function fetchNews() {
-    const track = document.getElementById('newsTrack');
-    if (!track) return;
-
-    // Try BBC first
-    fetch(PROXY + encodeURIComponent(SOURCES[0].url))
-        .then(r => r.json())
-        .then(data => {
-            if (data.status === 'ok' && data.items && data.items.length > 0) {
-                renderNews(data.items.slice(0, 12));
-            } else {
-                fallbackNews();
-            }
-        })
-        .catch(() => fallbackNews());
+function formatPrice(val) {
+  const n = parseFloat(val);
+  if (n >= 1000) return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return n.toFixed(2);
 }
+
+function buildTickerHTML(items, duplicate) {
+  let html = '';
+  const list = duplicate ? [...items, ...items] : items;
+  list.forEach(item => {
+    if (item === 'sep1' || item === 'sep2' || item === 'sep3' || item === 'sep4') {
+      html += '<div class="ticker-sep">•</div>';
+    } else {
+      html += `<div class="ticker-item">
+        <span class="ticker-label">${item.name}</span>
+        <span class="ticker-value">${formatPrice(item.price)}</span>
+        <span class="ticker-change ${item.direction}">${item.changePercent >= 0 ? '+' : ''}${item.changePercent}%</span>
+      </div>`;
+    }
+  });
+  return html;
+}
+
+let tickerAnimation = null;
+
+function populateTicker(data) {
+  const container = document.getElementById('stockTicker');
+  if (!container) return;
+
+  const ordered = TICKERS.map(key => {
+    if (key.startsWith('sep')) return key;
+    return data.find(d => d.key === key) || null;
+  }).filter(Boolean);
+
+  // Build map for lookup
+  const dataMap = {};
+  data.forEach(d => { dataMap[d.key] = d; });
+
+  const items = TICKERS.map(key => {
+    if (key.startsWith('sep')) return key;
+    return dataMap[key] || null;
+  }).filter(Boolean);
+
+  container.innerHTML = buildTickerHTML(items, true);
+
+  // Start scroll animation
+  if (tickerAnimation) { cancelAnimationFrame(tickerAnimation); tickerAnimation = null; }
+
+  let pos = 0;
+  const speed = 0.4;
+  function animate() {
+    pos -= speed;
+    const half = container.scrollWidth / 2;
+    if (pos <= -half) pos = 0;
+    container.style.transform = 'translateX(' + pos + 'px)';
+    tickerAnimation = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function fetchStocks() {
+  fetch('/api/stock')
+    .then(r => r.json())
+    .then(res => {
+      if (res.data && res.data.length > 0) {
+        populateTicker(res.data);
+      }
+    })
+    .catch(() => {});
+}
+
+fetchStocks();
+setInterval(fetchStocks, 180000); // refresh every 3 min
+
+// ===== LIVE NEWS TICKER (multi-source) =====
+const NEWS_FEEDS = [
+  { name: 'BBC', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+  { name: 'CNBC', url: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+  { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?taxonomy=best-sectors&post_type=best' }
+];
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
 function renderNews(items) {
-    const track = document.getElementById('newsTrack');
-    if (!track) return;
-
-    // Build a string of headlines separated by a divider
-    let html = '';
-    items.forEach((item, i) => {
-        const title = item.title || '';
-        const source = item.author || 'BBC News';
-        html += `<span class="news-item">📰 ${title} <span style="opacity:0.5;font-size:0.75rem;">— ${source}</span></span>`;
-    });
-    // Duplicate for seamless loop
-    track.innerHTML = html + html;
-
-    // Animate via CSS transform
-    const scrollWidth = track.scrollWidth / 2;
-    let pos = 0;
-    const speed = 0.5; // px per frame
-
-    function animate() {
-        pos -= speed;
-        if (pos <= -scrollWidth) {
-            pos = 0;
-        }
-        track.style.transform = 'translateX(' + pos + 'px)';
-        requestAnimationFrame(animate);
-    }
-    animate();
+  const track = document.getElementById('newsTrack');
+  if (!track) return;
+  let html = '';
+  items.forEach((item, i) => {
+    const src = item.source || 'News';
+    html += `<span class="news-item">📰 ${item.title} <span style="opacity:0.5;font-size:0.75rem;">— ${src}</span></span>`;
+  });
+  track.innerHTML = html + html;
+  let pos = 0;
+  const speed = 0.6;
+  function animate() {
+    pos -= speed;
+    if (pos <= -(track.scrollWidth / 2)) pos = 0;
+    track.style.transform = 'translateX(' + pos + 'px)';
+    requestAnimationFrame(animate);
+  }
+  animate();
 }
 
-function fallbackNews() {
-    const headlines = [
-        "Global markets react to latest economic data — Reuters",
-        "Tech stocks rally on AI optimism — Bloomberg",
-        "Central banks hold steady on interest rates — Financial Times",
-        "Oil prices fluctuate amid supply concerns — BBC News",
-        "Asia-Pacific markets mixed in morning trading — CNBC",
-        "Gold hits new milestone as investors seek safety — Reuters",
-        "Federal Reserve signals cautious approach — Wall Street Journal",
-        "European markets open higher on positive earnings — FT",
-        "Emerging market currencies strengthen — Bloomberg",
-        "Bitcoin breaks resistance level — CoinDesk"
-    ];
-    renderNews(headlines.map(h => ({ title: h.split(' — ')[0], author: h.split(' — ')[1] })));
+function fetchNews() {
+  const track = document.getElementById('newsTrack');
+  if (!track) return;
+
+  // Try multiple feeds, use first that succeeds
+  let tried = 0;
+
+  function tryFeed(index) {
+    if (index >= NEWS_FEEDS.length) {
+      renderNews(getFallbackNews());
+      return;
+    }
+    const feed = NEWS_FEEDS[index];
+    fetch(RSS_PROXY + encodeURIComponent(feed.url))
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'ok' && data.items && data.items.length > 0) {
+          const items = data.items.slice(0, 15).map(i => ({
+            title: i.title,
+            source: feed.name
+          }));
+          renderNews(items);
+        } else {
+          tryFeed(index + 1);
+        }
+      })
+      .catch(() => tryFeed(index + 1));
+  }
+  tryFeed(0);
+}
+
+function getFallbackNews() {
+  return [
+    { title: 'Global markets track record highs amid economic recovery', source: 'Reuters' },
+    { title: 'Tech sector leads gains on AI innovation wave', source: 'Bloomberg' },
+    { title: 'Central banks maintain cautious monetary policy stance', source: 'Financial Times' },
+    { title: 'Oil markets stabilize as OPEC maintains output targets', source: 'CNBC' },
+    { title: 'Asia-Pacific trade volumes rise on improved demand outlook', source: 'Nikkei Asia' },
+    { title: 'Gold prices supported by persistent inflation concerns', source: 'Reuters' },
+    { title: 'European stocks open higher on positive earnings season', source: 'BBC News' },
+    { title: 'Emerging market currencies strengthen against US dollar', source: 'Bloomberg' }
+  ];
 }
 
 fetchNews();
