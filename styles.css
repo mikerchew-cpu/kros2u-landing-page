@@ -184,10 +184,13 @@ body {
     margin-left: 2px;
 }
 
-.ticker-divider {
-    color: rgba(255,255,255,0.2);
-    padding: 0 10px;
-    font-size: 0.85rem;
+.ticker-divider,
+.ticker-price { display: none; }
+
+.ticker-sep {
+    color: rgba(255,255,255,0.15);
+    padding: 0 12px;
+    font-size: 0.6rem;
 }
 
 @keyframes ticker-scroll {
