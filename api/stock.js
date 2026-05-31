@@ -1,18 +1,18 @@
 const TICKERS = [
-  { key: 'sp500', name: 'S&P 500', symbol: '^GSPC', av: '.INX' },
-  { key: 'dow', name: 'Dow Jones', symbol: '^DJI', av: '.DJI' },
-  { key: 'nasdaq', name: 'NASDAQ', symbol: '^IXIC', av: '.IXIC' },
-  { key: 'ftse', name: 'FTSE 100', symbol: '^FTSE', av: '^FTSE' },
-  { key: 'nikkei', name: 'Nikkei 225', symbol: '^N225', av: '^N225' },
-  { key: 'dax', name: 'DAX', symbol: '^GDAXI', av: '^GDAXI' },
-  { key: 'hsi', name: 'Hang Seng', symbol: '^HSI', av: '^HSI' },
-  { key: 'asx', name: 'ASX 200', symbol: '^AXJO', av: '^AXJO' },
-  { key: 'gold', name: 'Gold', symbol: 'GC=F', av: 'XAUUSD' },
-  { key: 'silver', name: 'Silver', symbol: 'SI=F', av: 'XAGUSD' },
-  { key: 'crude', name: 'Crude Oil', symbol: 'CL=F', av: 'WTI' },
-  { key: 'natgas', name: 'Nat Gas', symbol: 'NG=F', av: 'NG' },
-  { key: 'copper', name: 'Copper', symbol: 'HG=F', av: 'HG' },
-  { key: 'platinum', name: 'Platinum', symbol: 'PL=F', av: 'PL' }
+  { key: 'sp500', name: 'S&P 500', symbol: '^GSPC' },
+  { key: 'dow', name: 'Dow Jones', symbol: '^DJI' },
+  { key: 'nasdaq', name: 'NASDAQ', symbol: '^IXIC' },
+  { key: 'ftse', name: 'FTSE 100', symbol: '^FTSE' },
+  { key: 'nikkei', name: 'Nikkei 225', symbol: '^N225' },
+  { key: 'dax', name: 'DAX', symbol: '^GDAXI' },
+  { key: 'hsi', name: 'Hang Seng', symbol: '^HSI' },
+  { key: 'asx', name: 'ASX 200', symbol: '^AXJO' },
+  { key: 'gold', name: 'Gold', symbol: 'GC=F' },
+  { key: 'silver', name: 'Silver', symbol: 'SI=F' },
+  { key: 'crude', name: 'Crude Oil', symbol: 'CL=F' },
+  { key: 'natgas', name: 'Nat Gas', symbol: 'NG=F' },
+  { key: 'copper', name: 'Copper', symbol: 'HG=F' },
+  { key: 'platinum', name: 'Platinum', symbol: 'PL=F' }
 ];
 
 const DEMO = [
@@ -38,39 +38,24 @@ function getDemoData() {
   return DEMO.map((d, i) => {
     const base = parseFloat(d.price);
     const jitter = Math.sin(seed * 0.1 + i * 1.5) * base * 0.003;
-    const p = Math.max(base + jitter, 0.01);
-    return { ...d, price: p.toFixed(2) };
+    return { ...d, price: Math.max(base + jitter, 0.01).toFixed(2) };
   });
 }
 
-// Try Yahoo Finance v7
-async function tryYahooV7(symbols) {
+async function tryYahoo() {
+  const symbols = TICKERS.map(t => t.symbol).join(',');
   const url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' + symbols;
   const r = await fetch(url, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept': 'application/json,text/html',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'Accept': 'application/json',
       'Origin': 'https://finance.yahoo.com',
       'Referer': 'https://finance.yahoo.com/'
     }
   });
-  if (!r.ok) throw new Error('Yahoo v7: ' + r.status);
+  if (!r.ok) throw new Error('Status ' + r.status);
   const j = await r.json();
   return j.quoteResponse?.result || [];
-}
-
-// Try Yahoo Finance v6 quote summary (individual calls)
-async function tryYahooV6(symbol) {
-  const url = 'https://query1.finance.yahoo.com/v6/finance/quoteSummary/' + encodeURIComponent(symbol) + '?modules=price';
-  const r = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0',
-      'Accept': 'application/json'
-    }
-  });
-  if (!r.ok) return null;
-  const j = await r.json();
-  return j.quoteSummary?.result?.[0]?.price || null;
 }
 
 export default async function handler(req, res) {
@@ -78,38 +63,12 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
 
   try {
-    const symbols = TICKERS.map(t => t.symbol).join(',');
-    let results;
-
-    // Strategy 1: Yahoo v7 batch
-    try {
-      results = await tryYahooV7(symbols);
-    } catch { results = null; }
-
-    // Strategy 2: Yahoo v6 individual
-    if (!results || results.length === 0) {
-      results = [];
-      for (const t of TICKERS) {
-        try {
-          const p = await tryYahooV6(t.symbol);
-          if (p) {
-            results.push({
-              symbol: t.symbol,
-              regularMarketPrice: p.regularMarketPrice?.raw,
-              regularMarketChange: p.regularMarketChange?.raw,
-              regularMarketChangePercent: p.regularMarketChangePercent?.raw
-            });
-          }
-        } catch {}
-      }
-    }
-
-    if (results && results.length > 0) {
-      const symbolMap = {};
-      results.forEach(r => { symbolMap[r.symbol] = r; });
-
+    const results = await tryYahoo();
+    if (results.length > 0) {
+      const map = {};
+      results.forEach(r => { map[r.symbol] = r; });
       const data = TICKERS.map(t => {
-        const r = symbolMap[t.symbol];
+        const r = map[t.symbol];
         if (!r) return null;
         const price = r.regularMarketPrice || 0;
         const change = r.regularMarketChange || 0;
@@ -121,62 +80,10 @@ export default async function handler(req, res) {
           direction: change >= 0 ? 'up' : 'down'
         };
       }).filter(Boolean);
-
-      if (data.length > 0) {
-        return res.json({ data, source: 'yahoo', timestamp: Date.now() });
-      }
+      if (data.length > 0) return res.json({ data, source: 'yahoo', timestamp: Date.now() });
     }
-
     res.json({ data: getDemoData(), source: 'demo', timestamp: Date.now() });
   } catch {
-    res.json({ data: getDemoData(), source: 'demo', timestamp: Date.now() });
-  }
-}
-  });
-
-  if (!response.ok) {
-    throw new Error(`Yahoo returned ${response.status}`);
-  }
-
-  const json = await response.json();
-  const results = json.quoteResponse?.result;
-
-  if (!results || !Array.isArray(results) || results.length === 0) {
-    throw new Error('No results from Yahoo');
-  }
-
-  return results.map(r => {
-    const ticker = SYMBOL_TO_KEY[r.symbol];
-    if (!ticker) return null;
-    const price = r.regularMarketPrice || 0;
-    const change = r.regularMarketChange || 0;
-    const changePercent = r.regularMarketChangePercent || 0;
-    return {
-      key: ticker.key, name: ticker.name,
-      price: price.toFixed(2), change: change.toFixed(2),
-      changePercent: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2),
-      direction: change >= 0 ? 'up' : 'down'
-    };
-  }).filter(Boolean);
-}
-
-function getDemoData() {
-  const now = new Date();
-  const seed = now.getMinutes() + now.getHours() * 60;
-  return DEMO.map(d => ({
-    ...d,
-    price: (parseFloat(d.price) + Math.sin(seed + TICKERS.findIndex(t => t.key === d.key)) * 10).toFixed(2)
-  }));
-}
-
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
-
-  try {
-    const data = await tryYahoo();
-    res.json({ data, source: 'yahoo', timestamp: Date.now() });
-  } catch (err) {
     res.json({ data: getDemoData(), source: 'demo', timestamp: Date.now() });
   }
 }
